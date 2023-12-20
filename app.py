@@ -1,9 +1,7 @@
-import cv2
-from insightface.app import FaceAnalysis
 import torch
 from diffusers import StableDiffusionPipeline, DDIMScheduler, AutoencoderKL
-from PIL import Image
 from ip_adapter.ip_adapter_faceid import IPAdapterFaceID
+from insightface.app import FaceAnalysis
 
 app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
 app.prepare(ctx_id=0, det_size=(640, 640))
