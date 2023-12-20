@@ -3,6 +3,7 @@ from diffusers import StableDiffusionPipeline, DDIMScheduler, AutoencoderKL
 from ip_adapter.ip_adapter_faceid import IPAdapterFaceID
 from huggingface_hub import hf_hub_download
 from insightface.app import FaceAnalysis
+import spaces
 
 app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
 app.prepare(ctx_id=0, det_size=(640, 640))
@@ -40,7 +41,9 @@ def generate_faceid_embeddings(image):
     faceid_embeds = torch.from_numpy(faces[0].normed_embedding).unsqueeze(0)
     return faceid_embeds
 
+@spaces.GPU
 def generate_image(image, prompt, negative_prompt):
+    pipe.to(device)
     faceid_embeds = generate_faceid_embeddings(image)
     images = ip_model.generate(
         prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=faceid_embeds, width=512, height=512, num_inference_steps=30
