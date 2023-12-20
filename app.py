@@ -48,5 +48,10 @@ def generate_image(image, prompt, negative_prompt):
     print(image)
     return image
 
-demo = gr.Interface(fn=generate_image, inputs=[gr.Image(label="Your face"), gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")], outputs=[gr.Gallery(label="Generated Image")])
+demo = gr.Interface(fn=generate_image,
+                    inputs=[gr.Image(label="Your face"),gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")],
+                    outputs=[gr.Gallery(label="Generated Image")],
+                    title="IP-Adapter-FaceID demo",
+                    description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID)"
+                   )
 demo.launch()
