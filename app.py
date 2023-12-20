@@ -5,9 +5,6 @@ from ip_adapter.ip_adapter_faceid import IPAdapterFaceID
 from huggingface_hub import hf_hub_download
 from insightface.app import FaceAnalysis
 
-
-app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-
 base_model_path = "SG161222/Realistic_Vision_V4.0_noVAE"
 vae_model_path = "stabilityai/sd-vae-ft-mse"
 ip_ckpt = hf_hub_download(repo_id='h94/IP-Adapter-FaceID', filename="ip-adapter-faceid_sd15.bin", repo_type="model")
@@ -43,6 +40,7 @@ def generate_faceid_embeddings(image):
 
 @spaces.GPU
 def generate_image(image, prompt, negative_prompt):
+    app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
     app.prepare(ctx_id=0, det_size=(640, 640))
     pipe.to(device)
     faceid_embeds = generate_faceid_embeddings(image)
