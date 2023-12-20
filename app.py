@@ -1,6 +1,7 @@
 import torch
 from diffusers import StableDiffusionPipeline, DDIMScheduler, AutoencoderKL
 from ip_adapter.ip_adapter_faceid import IPAdapterFaceID
+from huggingface_hub import hf_hub_download
 from insightface.app import FaceAnalysis
 
 app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
