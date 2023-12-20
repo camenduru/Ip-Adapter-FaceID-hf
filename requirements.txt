@@ -5,4 +5,5 @@ accelerate
 safetensors
 einops
 onnxruntime-gpu
+spaces
 git+https://github.com/tencent-ailab/IP-Adapter.git
