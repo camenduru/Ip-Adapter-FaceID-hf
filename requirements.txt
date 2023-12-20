@@ -3,4 +3,5 @@ diffusers
 transformers
 accelerate
 safetensors
+einops
 git+https://github.com/tencent-ailab/IP-Adapter.git
