@@ -5,6 +5,7 @@ from ip_adapter.ip_adapter_faceid import IPAdapterFaceID
 from huggingface_hub import hf_hub_download
 from insightface.app import FaceAnalysis
 import gradio as gr
+import cv2
 
 base_model_path = "SG161222/Realistic_Vision_V4.0_noVAE"
 vae_model_path = "stabilityai/sd-vae-ft-mse"
@@ -34,22 +35,28 @@ pipe = StableDiffusionPipeline.from_pretrained(
 ip_model = IPAdapterFaceID(pipe, ip_ckpt, device)
 
 @spaces.GPU
-def generate_image(image, prompt, negative_prompt):
+def generate_image(images, prompt, negative_prompt):
     pipe.to(device)
-    
     app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
     app.prepare(ctx_id=0, det_size=(640, 640))
-    faces = app.get(image)
-    faceid_embeds = torch.from_numpy(faces[0].normed_embedding).unsqueeze(0)
+
+    faceid_all_embeds = []
+    for image in images:
+        face = cv2.imread(image)
+        faces = app.get(face)
+        faceid_embed = torch.from_numpy(faces[0].normed_embedding).unsqueeze(0)
+        faceid_all_embeds.append(faceid_embed)
+    
+    average_embedding = torch.mean(torch.stack(faceid_all_embeds, dim=0), dim=0)
     
     image = ip_model.generate(
-        prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=faceid_embeds, width=512, height=512, num_inference_steps=30
+        prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=average_embedding, width=512, height=512, num_inference_steps=30
     )
     print(image)
     return image
 
 demo = gr.Interface(fn=generate_image,
-                    inputs=[gr.Image(label="Your face"),gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")],
+                    inputs=[gr.Files(label="Drag 1 or more photos of your face", file_types="image"),gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")],
                     outputs=[gr.Gallery(label="Generated Image")],
                     title="IP-Adapter-FaceID demo",
                     description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID)"
