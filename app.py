@@ -4,6 +4,7 @@ from diffusers import StableDiffusionPipeline, DDIMScheduler, AutoencoderKL
 from ip_adapter.ip_adapter_faceid import IPAdapterFaceID
 from huggingface_hub import hf_hub_download
 from insightface.app import FaceAnalysis
+import gradio as gr
 
 base_model_path = "SG161222/Realistic_Vision_V4.0_noVAE"
 vae_model_path = "stabilityai/sd-vae-ft-mse"
