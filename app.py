@@ -7,7 +7,6 @@ from insightface.app import FaceAnalysis
 
 
 app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-app.prepare(ctx_id=0, det_size=(640, 640))
 
 base_model_path = "SG161222/Realistic_Vision_V4.0_noVAE"
 vae_model_path = "stabilityai/sd-vae-ft-mse"
@@ -44,6 +43,7 @@ def generate_faceid_embeddings(image):
 
 @spaces.GPU
 def generate_image(image, prompt, negative_prompt):
+    app.prepare(ctx_id=0, det_size=(640, 640))
     pipe.to(device)
     faceid_embeds = generate_faceid_embeddings(image)
     images = ip_model.generate(
