@@ -44,8 +44,9 @@ def generate_image(image, prompt, negative_prompt):
     
     image = ip_model.generate(
         prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=faceid_embeds, width=512, height=512, num_inference_steps=30
-    ).images[0]
+    )
+    print(image)
     return image
 
-demo = gr.Interface(fn=generate_image, inputs=[gr.Image(label="Your face"), gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")], outputs=[gr.Image(label="Generated Image")])
+demo = gr.Interface(fn=generate_image, inputs=[gr.Image(label="Your face"), gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")], outputs=[gr.Gallery(label="Generated Image")])
 demo.launch()
