@@ -1,5 +1,5 @@
 ---
-title: Ip-Adapter-FaceID
+title: IP-Adapter-FaceID
 emoji: 🧑🏿🧑🏽‍🦱
 colorFrom: gray
 colorTo: indigo
