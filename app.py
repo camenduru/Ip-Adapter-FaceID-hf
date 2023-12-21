@@ -28,8 +28,6 @@ pipe = StableDiffusionPipeline.from_pretrained(
     torch_dtype=torch.float16,
     scheduler=noise_scheduler,
     vae=vae,
-    #feature_extractor=None,
-    #safety_checker=None
 )
 
 ip_model = IPAdapterFaceID(pipe, ip_ckpt, device)
@@ -55,11 +53,21 @@ def generate_image(images, prompt, negative_prompt):
     print(image)
     return image
 
-demo = gr.Interface(fn=generate_image,
-                    inputs=[gr.Files(label="Drag 1 or more photos of your face", file_types=["image"]),gr.Textbox(label="Prompt"), gr.Textbox(label="Negative Prompt")],
-                    outputs=[gr.Gallery(label="Generated Image")],
-                    title="IP-Adapter-FaceID demo",
-                    description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID)",
-                    allow_flagging=False,
-                   )
+demo = gr.Interface(
+        fn=generate_image,
+        inputs=[
+            gr.Files(
+                label="Drag 1 or more photos of your face",
+                file_types=["image"]
+            ),
+            gr.Textbox(label="Prompt",
+                       info="Try something like 'a photo of a man/woman/person'",
+                       placeholder="A photo of a [man/woman/person]..."),
+            gr.Textbox(label="Negative Prompt")
+        ],
+        outputs=[gr.Gallery(label="Generated Image")],
+        title="IP-Adapter-FaceID demo",
+        description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID)",
+        allow_flagging=False,
+        )
 demo.launch()
