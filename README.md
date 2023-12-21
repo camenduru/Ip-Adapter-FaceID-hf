@@ -1,6 +1,6 @@
 ---
-title: Ip Adapter FaceID
-emoji: 🐨
+title: Ip-Adapter-FaceID
+emoji: 🧑🏿🧑🏽‍🦱
 colorFrom: gray
 colorTo: indigo
 sdk: gradio
