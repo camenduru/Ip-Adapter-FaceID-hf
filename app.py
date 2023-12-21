@@ -63,7 +63,7 @@ demo = gr.Interface(
             gr.Textbox(label="Prompt",
                        info="Try something like 'a photo of a man/woman/person'",
                        placeholder="A photo of a [man/woman/person]..."),
-            gr.Textbox(label="Negative Prompt")
+            gr.Textbox(label="Negative Prompt", placeholder="low quality")
         ],
         outputs=[gr.Gallery(label="Generated Image")],
         title="IP-Adapter-FaceID demo",
