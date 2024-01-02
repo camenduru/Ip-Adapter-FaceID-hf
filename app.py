@@ -1,6 +1,6 @@
 import torch
 import spaces
-from diffusers import StableDiffusionPipeline, DDIMScheduler, AutoencoderKL
+from diffusers import StableDiffusionPipeline, DDIMScheduler, AutoencoderKL, AutoFeatureExtractor, StableDiffusionSafetyChecker
 from ip_adapter.ip_adapter_faceid import IPAdapterFaceID, IPAdapterFaceIDPlus
 from huggingface_hub import hf_hub_download
 from insightface.app import FaceAnalysis
