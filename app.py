@@ -128,6 +128,6 @@ with gr.Blocks(css=css) as demo:
                     inputs=[files,prompt,negative_prompt,preserve, face_strength, likeness_strength, nfaa_negative_prompts],
                     outputs=gallery)
     
-    gr.Markdown("This demo includes extra features to prevent the usage of the model to generate content with faces of people, including third parties, that is not safe for all audiences, including naked or semi-naked people.")
+    gr.Markdown("This demo includes extra features to mitigate the implicit bias of the model and prevent explicit usage of it to generate content with faces of people, including third parties, that is not safe for all audiences, including naked or semi-naked people.")
     
 demo.launch()
