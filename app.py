@@ -116,7 +116,10 @@ with gr.Blocks(css=css) as demo:
                 preserve = gr.Checkbox(label="Preserve Face Structure", info="Higher quality, less versatility (the face structure of your first photo will be preserved)", value=True)
                 face_strength = gr.Slider(label="Face Structure strength", info="Only applied if preserve face structure is checked", value=1.3, step=0.1, minimum=0, maximum=3)
                 likeness_strength = gr.Slider(label="Face Embed strength", value=1.0, step=0.1, minimum=0, maximum=5)
-                nfaa_negative_prompts = gr.Textbox(label="Appended Negative Prompts", info="Negative prompts to steer generations towards safe for all audiences outputs", value="naked, swimsuit")
+                nfaa_negative_prompts = gr.Textbox(label="Appended Negative Prompts", info="Negative prompts to steer generations towards safe for all audiences outputs", value="naked, bikini, skimpy, scanty, bare skin, lingerie, swimsuit, exposed, see-through")
+        
+        gr.Markdown("This demo includes extra features to prevent the usage of the model to generate content with faces of people, including third parties, that is not safe for all audiences, including naked or semi-naked people.")
+        
         with gr.Column():
             gallery = gr.Gallery(label="Generated Images")
         style.change(fn=change_style,
