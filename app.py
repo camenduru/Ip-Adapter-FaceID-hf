@@ -32,7 +32,7 @@ pipe = StableDiffusionPipeline.from_pretrained(
 
 ip_model = IPAdapterFaceID(pipe, ip_ckpt, device)
 
-@spaces.GPU
+@spaces.GPU(enable_queue=True)
 def generate_image(images, prompt, negative_prompt, progress=gr.Progress(track_tqdm=True)):
     pipe.to(device)
     app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
