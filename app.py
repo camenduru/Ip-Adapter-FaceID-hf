@@ -84,7 +84,7 @@ demo = gr.Interface(
                        info="Try something like 'a photo of a man/woman/person'",
                        placeholder="A photo of a [man/woman/person]..."),
             gr.Textbox(label="Negative Prompt", placeholder="low quality"),
-            gr.Checkbox(label="Preserve Face Structure", value=True),
+            gr.Checkbox(label="Preserve Face Structure", info="higher quality, the face structure of your first photo will be preserved)", value=True),
         ],
         outputs=[gr.Gallery(label="Generated Image")],
         title="IP-Adapter-FaceID demo",
