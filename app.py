@@ -49,18 +49,20 @@ def generate_image(images, prompt, negative_prompt, preserve_face_structure, pro
         faces = app.get(face)
         faceid_embed = torch.from_numpy(faces[0].normed_embedding).unsqueeze(0)
         faceid_all_embeds.append(faceid_embed)
-        if(first_iteration):
+        if(first_iteration and preserve_face_structure):
             face_image = face_align.norm_crop(face, landmark=faces[0].kps, image_size=224) # you can also segment the face
             first_iteration = False
             
     average_embedding = torch.mean(torch.stack(faceid_all_embeds, dim=0), dim=0)
     
     if(not preserve_face_structure):
+        print("Generating normal")
         image = ip_model.generate(
             prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=average_embedding,
             width=512, height=512, num_inference_steps=30
         )
     else:
+        print("Generating plus")
         image = ip_model_plus.generate(
             prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=average_embedding,
             face_image=face_image, shortcut=True, s_scale=1.5, width=512, height=512, num_inference_steps=30
