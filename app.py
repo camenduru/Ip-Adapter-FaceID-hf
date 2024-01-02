@@ -84,11 +84,11 @@ demo = gr.Interface(
                        info="Try something like 'a photo of a man/woman/person'",
                        placeholder="A photo of a [man/woman/person]..."),
             gr.Textbox(label="Negative Prompt", placeholder="low quality"),
-            gr.Checkbox(label="Preserve Face Structure", value=False),
+            gr.Checkbox(label="Preserve Face Structure", value=True),
         ],
         outputs=[gr.Gallery(label="Generated Image")],
         title="IP-Adapter-FaceID demo",
-        description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID)",
+        description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID) - 'preserve face structure' uses the plus v2 model. Non-commercial license",
         allow_flagging=False,
         )
 demo.launch()
