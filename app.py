@@ -37,7 +37,7 @@ ip_model = IPAdapterFaceID(pipe, ip_ckpt, device)
 ip_model_plus = IPAdapterFaceIDPlus(pipe, image_encoder_path, ip_plus_ckpt, device)
 
 @spaces.GPU(enable_queue=True)
-def generate_image(images, prompt, negative_prompt, preserve_face_structure, progress=gr.Progress(track_tqdm=True)):
+def generate_image(images, prompt, negative_prompt, preserve_face_structure, face_strength, likeness_strength, nfaa_negative_prompt, progress=gr.Progress(track_tqdm=True)):
     pipe.to(device)
     app = FaceAnalysis(name="buffalo_l", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
     app.prepare(ctx_id=0, det_size=(640, 640))
@@ -55,40 +55,68 @@ def generate_image(images, prompt, negative_prompt, preserve_face_structure, pro
             
     average_embedding = torch.mean(torch.stack(faceid_all_embeds, dim=0), dim=0)
     
+    total_negative_prompt = f"{negative_prompt} {nfaa_negative_prompt}"
+    
     if(not preserve_face_structure):
         print("Generating normal")
         image = ip_model.generate(
-            prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=average_embedding,
-            width=512, height=512, num_inference_steps=30
+            prompt=prompt, negative_prompt=total_negative_prompt, faceid_embeds=average_embedding,
+            scale=likeness_strength, width=512, height=512, num_inference_steps=30
         )
     else:
         print("Generating plus")
         image = ip_model_plus.generate(
-            prompt=prompt, negative_prompt=negative_prompt, faceid_embeds=average_embedding,
-            face_image=face_image, shortcut=True, s_scale=1.5, width=512, height=512, num_inference_steps=30
+            prompt=prompt, negative_prompt=total_negative_prompt, faceid_embeds=average_embedding,
+            scale=likeness_strength, face_image=face_image, shortcut=True, s_scale=face_strength, width=512, height=512, num_inference_steps=30
         )
     print(image)
     return image
+
+def change_style(style):
+    if style == "Photorealistic":
+        return(gr.update(value=True), gr.update(value=1.3), gr.update(value=1.0))
+    else:
+        return(gr.update(value=True), gr.update(value=0.1), gr.update(value=0.8))
+
+def swap_to_gallery(images):
+    return gr.update(value=images, visible=True), gr.update(visible=True), gr.update(visible=False)
+
+def remove_back_to_files():
+    return gr.update(visible=False), gr.update(visible=False), gr.update(visible=True)
 css = '''
 h1{margin-bottom: 0 !important}
 '''
-demo = gr.Interface(
-        css=css,
-        fn=generate_image,
-        inputs=[
-            gr.Files(
-                label="Drag 1 or more photos of your face",
-                file_types=["image"]
-            ),
-            gr.Textbox(label="Prompt",
+with gr.Blocks(css=css) as demo:
+    gr.Markdown("# IP-Adapter-FaceID demo")
+    gr.Markdown("Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID) - 'preserve face structure' uses the plus v2 model. Non-commercial license")
+    with gr.Row():
+        with gr.Column():
+            files = gr.Files(
+                        label="Drag 1 or more photos of your face",
+                        file_types=["image"]
+                    )
+            uploaded_files = gr.Gallery(label="Your images", visible=False, columns=5, rows=1, height=125)
+            with gr.Column(visible=False) as clear_button:
+                remove_and_reupload = gr.ClearButton(value="Remove and upload new ones", components=files, size="sm")
+            prompt = gr.Textbox(label="Prompt",
                        info="Try something like 'a photo of a man/woman/person'",
-                       placeholder="A photo of a [man/woman/person]..."),
-            gr.Textbox(label="Negative Prompt", placeholder="low quality"),
-            gr.Checkbox(label="Preserve Face Structure", info="Higher quality, less versatility (the face structure of your first photo will be preserved)", value=True),
-        ],
-        outputs=[gr.Gallery(label="Generated Image")],
-        title="IP-Adapter-FaceID demo",
-        description="Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID) - 'preserve face structure' uses the plus v2 model. Non-commercial license",
-        allow_flagging=False,
-        )
+                       placeholder="A photo of a [man/woman/person]...")
+            negative_prompt = gr.Textbox(label="Negative Prompt", placeholder="low quality")
+            style = gr.Radio(label="Generation type", info="For stylized try prompts like 'a watercolor painting of a woman'", choices=["Photorealistic", "Stylized"], value="Photorealistic")
+            submit = gr.Button("Submit")
+            with gr.Accordion(open=False, label="Advanced Options"):
+                preserve = gr.Checkbox(label="Preserve Face Structure", info="Higher quality, less versatility (the face structure of your first photo will be preserved)", value=True)
+                face_strength = gr.Slider(label="Face Structure strength", info="Only applied if preserve face structure is checked", value=1.3, step=0.1, minimum=0, maximum=3)
+                likeness_strength = gr.Slider(label="Face Embed strength", value=1.0, step=0.1, minimum=0, maximum=5)
+                nfaa_negative_prompts = gr.Textbox(label="Appended Negative Prompts", info="Negative prompts to steer generations towards safe for all audiences outputs", value="naked, swimsuit")
+        with gr.Column():
+            gallery = gr.Gallery(label="Generated Images")
+        style.change(fn=change_style,
+                    inputs=style,
+                    outputs=[preserve, face_strength, likeness_strength])
+        files.upload(fn=swap_to_gallery, inputs=files, outputs=[uploaded_files, clear_button, files])
+        remove_and_reupload.click(fn=remove_back_to_files, outputs=[uploaded_files, clear_button, files])
+        submit.click(fn=generate_image,
+                    inputs=[files,prompt,negative_prompt,preserve, face_strength, likeness_strength, nfaa_negative_prompts],
+                    outputs=gallery)
 demo.launch()
