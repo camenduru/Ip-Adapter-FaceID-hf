@@ -14,6 +14,10 @@ image_encoder_path = "laion/CLIP-ViT-H-14-laion2B-s32B-b79K"
 ip_ckpt = hf_hub_download(repo_id="h94/IP-Adapter-FaceID", filename="ip-adapter-faceid_sd15.bin", repo_type="model")
 ip_plus_ckpt = hf_hub_download(repo_id="h94/IP-Adapter-FaceID", filename="ip-adapter-faceid-plusv2_sd15.bin", repo_type="model")
 
+safety_model_id = "CompVis/stable-diffusion-safety-checker"
+safety_feature_extractor = AutoFeatureExtractor.from_pretrained(safety_model_id)
+safety_checker = StableDiffusionSafetyChecker.from_pretrained(safety_model_id)
+
 device = "cuda"
 
 noise_scheduler = DDIMScheduler(
@@ -31,6 +35,8 @@ pipe = StableDiffusionPipeline.from_pretrained(
     torch_dtype=torch.float16,
     scheduler=noise_scheduler,
     vae=vae,
+    feature_extractor=safety_feature_extractor,
+    safety_checker=safety_checker
 )
 
 ip_model = IPAdapterFaceID(pipe, ip_ckpt, device)
