@@ -5,6 +5,6 @@ accelerate
 safetensors
 einops
 onnxruntime-gpu
-spacesh==0.19.4
+spaces==0.19.4
 opencv-python
 git+https://github.com/tencent-ailab/IP-Adapter.git
