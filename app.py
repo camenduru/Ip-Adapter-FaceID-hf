@@ -95,8 +95,8 @@ css = '''
 h1{margin-bottom: 0 !important}
 '''
 with gr.Blocks(css=css) as demo:
-    gr.Markdown("# IP-Adapter-FaceID demo")
-    gr.Markdown("Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID) - 'preserve face structure' uses the plus v2 model. Non-commercial license")
+    gr.Markdown("# IP-Adapter-FaceID Plus demo")
+    gr.Markdown("Demo for the [h94/IP-Adapter-FaceID model](https://huggingface.co/h94/IP-Adapter-FaceID) - Non-commercial license")
     with gr.Row():
         with gr.Column():
             files = gr.Files(
@@ -113,7 +113,7 @@ with gr.Blocks(css=css) as demo:
             style = gr.Radio(label="Generation type", info="For stylized try prompts like 'a watercolor painting of a woman'", choices=["Photorealistic", "Stylized"], value="Photorealistic")
             submit = gr.Button("Submit")
             with gr.Accordion(open=False, label="Advanced Options"):
-                preserve = gr.Checkbox(label="Preserve Face Structure", info="Higher quality, less versatility (the face structure of your first photo will be preserved)", value=True)
+                preserve = gr.Checkbox(label="Preserve Face Structure", info="Higher quality, less versatility (the face structure of your first photo will be preserved). Unchecking this will use the v1 model.", value=True)
                 face_strength = gr.Slider(label="Face Structure strength", info="Only applied if preserve face structure is checked", value=1.3, step=0.1, minimum=0, maximum=3)
                 likeness_strength = gr.Slider(label="Face Embed strength", value=1.0, step=0.1, minimum=0, maximum=5)
                 nfaa_negative_prompts = gr.Textbox(label="Appended Negative Prompts", info="Negative prompts to steer generations towards safe for all audiences outputs", value="naked, bikini, skimpy, scanty, bare skin, lingerie, swimsuit, exposed, see-through")    
