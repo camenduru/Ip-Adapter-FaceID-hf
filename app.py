@@ -41,8 +41,8 @@ pipe = StableDiffusionPipeline.from_pretrained(
     safety_checker=safety_checker
 )
 
-pipe.load_lora_weights("h94/IP-Adapter-FaceID", weight_name="ip-adapter-faceid-plusv2_sd15_lora.safetensors")
-pipe.fuse_lora()
+#pipe.load_lora_weights("h94/IP-Adapter-FaceID", weight_name="ip-adapter-faceid-plusv2_sd15_lora.safetensors")
+#pipe.fuse_lora()
 
 ip_model = IPAdapterFaceID(pipe, ip_ckpt, device)
 ip_model_plus = IPAdapterFaceIDPlus(pipe, image_encoder_path, ip_plus_ckpt, device)
